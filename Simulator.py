@@ -21,10 +21,11 @@ def inputs_hex():
 
 def inputs_8bit():
     for value in registers.values():
-        if int(value, 16) <= 255:
+        if value <= "ff":
             return True
         else:
-            return False
+
+            break
 
 
 def register_state():
