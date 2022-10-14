@@ -42,7 +42,6 @@ while run:
             print("Podaj drugi rejestr rozkazu MOV: ")
             reg2 = input()
             MOV(reg2, reg1)
-            stan_rejestru()
         else:
             print("Zły rozkaz!")
     else:
