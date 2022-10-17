@@ -1,60 +1,63 @@
-run = True
-registers = {"AL": 00,
-             "AH": 00,
-             "BL": 00,
-             "BH": 00,
-             "CL": 00,
-             "CH": 00,
-             "DL": 00,
-             "DH": 00,
+registers = {"AL": None,
+             "AH": None,
+             "BL": None,
+             "BH": None,
+             "CL": None,
+             "CH": None,
+             "DL": None,
+             "DH": None,
              }
 
 
-def inputs_hex():
-    for value in registers.values():
-        try:
-            int(value, 16)
-            return True
-        except ValueError:
-            return False
-
-
-def inputs_8bit():
-    for value in registers.values():
-        if value <= "ff":
-            return True
-        else:
-
-            break
-
-
 def register_state():
-    for register, value in registers.items():
-        print(register, "=", value)
+    print("\nInitial state of the registers of Intel 8080 processor: \n")
+    for register in registers:
+        print(register, "=", registers[register])
+
+
+def user_input():
+    for r in registers:
+        registers[r] = input(f"Enter value stored in {r} register: ")
+
+
+# noinspection PyTypeChecker
+def inputs_hex_and_8_bit():
+    try:
+        return all(int(value, 16) <= 255 for value in registers.values())
+    except ValueError:
+        return False
 
 
 def MOV(a, b):
     registers[a] = registers[b]
 
 
+run = True
 while run:
-    for x in registers:
-        registers[x] = input(f"Enter value stored in {x} register: ")
-    if inputs_hex():
-        if inputs_8bit():
-            print("\nInitial state of the registers of Intel 8080 processor: \n")
-            register_state()
-            instruction = input("\nEnter instruction name for simulation: ")
-            if instruction == "MOV":
-                reg1 = input("Enter first register for MOV instruction: ")
-                reg2 = input("Enter second register for MOV instruction: ")
-                if reg1 and reg2 in registers:
-                    MOV(reg2, reg1)
-                else:
-                    print("\nWrong registers!\n")
+    register_state()
+    action = int(input(
+        "\nEnter action you want to execute:\n\nChange values of the registers - 1\nEnter instruction for program to execute - 2\nQuit - 3\n"))
+    if action == 1:
+        wrong_inputs = True
+        while wrong_inputs:
+            user_input()
+            if inputs_hex_and_8_bit():
+                wrong_inputs = False
             else:
-                print("Wrong instruction")
+                print("\nInputs not hexadecimal or not 8 bit!")
+    elif action == 2:
+        instruction = input("\nEnter instruction name for simulation: ")
+        if instruction == "MOV":
+            reg1 = input("Enter first register for MOV instruction: ")
+            reg2 = input("Enter second register for MOV instruction: ")
+            if reg1 and reg2 in registers:
+                MOV(reg2, reg1)
+                print("\n")
+            else:
+                print("\nWrong registers!\n")
         else:
-            print("\nWrong input! Input(s) not a 8 bit number!\n")
+            print("Wrong instruction!")
+    elif action == 3:
+        run = False
     else:
-        print("\nWrong input! Input(s) not hexadecimal!\n")
+        print("Wrong action!")
