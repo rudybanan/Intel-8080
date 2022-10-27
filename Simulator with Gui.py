@@ -48,7 +48,7 @@ while True:
         break
     if event == 'Submit':
         for x in registers:
-            registers[x] = values[x]
+            registers[x] = values[x.upper()]
         if inputs_hex_and_8_bit():
             break
         else:
