@@ -36,11 +36,28 @@ def XCHG(x, y):
     registers[x], registers[y] = registers[y], registers[x]
 
 
-run = True
-while run:
+def NOT(x):
+    temp = int(registers[x], 16)
+    registers[x] = 255 - temp
+
+
+def INC(x):
+    temp = int(registers[x], 16)
+    temp += 1
+    registers[x] = hex(temp)
+
+
+def DEC(x):
+    temp = int(registers[x], 16)
+    temp -= 1
+    registers[x] = hex(temp)
+
+
+while True:
     register_state()
     try:
-        action = int(input("\nEnter action you want to execute:\n\nChange values of the registers - 1\nEnter instruction for program to execute - 2\nQuit - 3\n\n"))
+        action = int(input(
+            "\nEnter action you want to execute:\n\nChange values of the registers - 1\nEnter instruction for program to execute - 2\nQuit - 3\n\n"))
         if action == 1:
             wrong_inputs = True
             while wrong_inputs:
@@ -50,7 +67,7 @@ while run:
                 else:
                     print("\nInputs not hexadecimal or not 8 bit!")
         elif action == 2:
-            instruction = int(input("\nChoose instruction for simulation:\nMOV - 1\nXCHG - 2\n\n"))
+            instruction = int(input("\nChoose instruction for simulation:\nMOV - 1\nXCHG - 2\nNOT - 3\nINC - 4\nDEC - 5\n\n"))
             if instruction == 1:
                 reg1 = input("Enter first register for MOV instruction: ").upper()
                 reg2 = input("Enter second register for MOV instruction: ").upper()
@@ -66,11 +83,30 @@ while run:
                     XCHG(reg1, reg2)
                 else:
                     print("\nWrong registers!\n")
+            elif instruction == 3:
+                reg = input("Enter register for NOT instruction: ")
+                if reg in registers:
+                    NOT(reg)
+            elif instruction == 4:
+                reg = input("Enter register for INC instruction: ")
+                if reg in registers:
+                    INC(reg)
+            elif instruction == 5:
+                reg = input("Enter register for INC instruction: ")
+                if reg in registers:
+                    DEC(reg)
             else:
                 print("Wrong instruction!")
         elif action == 3:
-            run = False
+            break
         else:
             print("Wrong action!")
     except ValueError:
         print("Wrong action!")
+
+
+# AND - dwa rejestry 0,1 daje 0 w pierwszym itd dla kazdego bitu
+# OR -
+# XOR -
+# ADD - dodawanie
+# SUB - odejmowanie
