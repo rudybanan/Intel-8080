@@ -33,7 +33,16 @@ inputs = [
     [sg.Button('Submit', key="_SUBMIT_"),
      sg.Text("Inputs not hexadecimal or not 8 bit!", key="_INPUT_ERROR_", visible=False)],
 ]
-
+register_values = [
+    [sg.Text("AL = ")],
+    [sg.Text("AH = ")],
+    [sg.Text("BL = ")],
+    [sg.Text("BH = ")],
+    [sg.Text("CL = ")],
+    [sg.Text("CH = ")],
+    [sg.Text("DL = ")],
+    [sg.Text("DH = ")],
+]
 instructions = [
     [sg.Button('MOV', key='MOV'), sg.Button('XCHG', key='XCHG')],
     [sg.Button('INC', key='INC'), sg.Button('DEC', key='DEC')],
@@ -43,12 +52,13 @@ instructions = [
 ]
 
 layout = [
-    [sg.Column(inputs, key="_INPUTS_", visible=True),
+    [sg.Column(register_values),
+     sg.Column(inputs, key="_INPUTS_", visible=True),
      sg.Column(instructions, key="_INSTRUCTIONS_", visible=False)
      ]
 ]
 
-window = sg.Window(title="Simulator of Intel 8086", layout=layout, size=(450, 300))
+window = sg.Window(title="Simulator of Intel 8086", layout=layout, size=(550, 300))
 
 while True:
     event, values = window.read()
