@@ -23,7 +23,6 @@ def inputs_hex_and_8_bit():
 def register_state():
     print("\nInitial state of the registers of Intel 8086 processor: \n")
     for register in registers:
-        print(register, "=", registers[register])
 
 
 def clearing_layout():
@@ -77,21 +76,19 @@ layout = [
     [sg.Button('NOT', key='NOT', visible=False), sg.Push(), sg.Button('AND', key='AND', visible=False)],
     [sg.Button('OR', key='OR', visible=False), sg.Push(), sg.Button('XOR', key='XOR', visible=False)],
     [sg.Button('ADD', key='ADD', visible=False), sg.Push(), sg.Button('SUB', key='SUB', visible=False)],
-]
+    ]
 
 window = sg.Window(title="Simulator of Intel 8086", layout=layout)
 
 while True:
     event, values = window.read()
-    if event == sg.WIN_CLOSED:  # if user closes window or clicks cancel
+    if event == sg.WIN_CLOSED:
         break
     if event == 'Submit':
         for x in registers:
-            registers[x] = values[x]
+            registers[x] = values[x.upper()]
         if inputs_hex_and_8_bit():
             clearing_layout()
             show_instructions()
         else:
             window["_INPUT_ERROR_"].Update(visible=True)
-
-window.close()
