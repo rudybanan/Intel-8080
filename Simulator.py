@@ -17,10 +17,9 @@ def register_state():
 
 def user_input():
     for r in registers:
-        registers[r] = input(f"Enter value stored in {r} register: ").upper()
+        registers[r] = hex(int(input(f"Enter value stored in {r} register: "), 16))
 
 
-# noinspection PyTypeChecker
 def inputs_hex_and_8_bit():
     try:
         return all(int(value, 16) <= 255 for value in registers.values())
@@ -38,7 +37,7 @@ def XCHG(x, y):
 
 def NOT(x):
     temp = int(registers[x], 16)
-    registers[x] = 255 - temp
+    registers[x] = hex(255 - temp)
 
 
 def INC(x):
@@ -51,6 +50,26 @@ def DEC(x):
     temp = int(registers[x], 16)
     temp -= 1
     registers[x] = hex(temp)
+
+
+def AND(x, y):
+    registers[x] = registers[x] & registers[y]
+
+
+def OR(x, y):
+    registers[x] = registers[x] | registers[y]
+
+
+def XOR(x, y):
+    registers[x] = registers[x] ^ registers[y]
+
+
+def ADD(x, y):
+    registers[x] = registers[x] + registers[y]
+
+
+def SUB(x, y):
+    registers[x] = registers[x] - registers[y]
 
 
 while True:
@@ -67,7 +86,8 @@ while True:
                 else:
                     print("\nInputs not hexadecimal or not 8 bit!")
         elif action == 2:
-            instruction = int(input("\nChoose instruction for simulation:\nMOV - 1\nXCHG - 2\nNOT - 3\nINC - 4\nDEC - 5\n\n"))
+            instruction = int(
+                input("\nChoose instruction for simulation:\nMOV - 1\nXCHG - 2\nNOT - 3\nINC - 4\nDEC - 5\n\n"))
             if instruction == 1:
                 reg1 = input("Enter first register for MOV instruction: ").upper()
                 reg2 = input("Enter second register for MOV instruction: ").upper()
@@ -103,7 +123,6 @@ while True:
             print("Wrong action!")
     except ValueError:
         print("Wrong action!")
-
 
 # AND - dwa rejestry 0,1 daje 0 w pierwszym itd dla kazdego bitu
 # OR -

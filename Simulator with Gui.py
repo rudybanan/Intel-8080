@@ -10,7 +10,7 @@ registers = {"AL": None,
              "DH": None,
              }
 
-sg.theme('DarkAmber')
+sg.theme('DarkBrown6')
 
 
 def inputs_hex_and_8_bit():
@@ -20,13 +20,70 @@ def inputs_hex_and_8_bit():
         return False
 
 
+def MOV(a, b):
+    registers[a] = registers[b]
+
+
+def XCHG(x, y):
+    registers[x], registers[y] = registers[y], registers[x]
+
+
+def NOT(x):
+    temp = int(registers[x], 16)
+    registers[x] = hex(255 - temp)
+
+
+def INC(x):
+    temp = int(registers[x], 16)
+    temp += 1
+    registers[x] = hex(temp)
+
+
+def DEC(x):
+    temp = int(registers[x], 16)
+    temp -= 1
+    registers[x] = hex(temp)
+
+
+def AND(x, y):
+    registers[x] = registers[x] & registers[y]
+
+
+def OR(x, y):
+    registers[x] = registers[x] | registers[y]
+
+
+def XOR(x, y):
+    registers[x] = registers[x] ^ registers[y]
+
+
+def ADD(x, y):
+    registers[x] = registers[x] + registers[y]
+
+
+def SUB(x, y):
+    registers[x] = registers[x] - registers[y]
+
+
 def instruction_layout():
     window["_SUBMIT_"].Update(visible=False)
     window["_INITIAL_TEXT_"].Update(visible=False)
+    window["_INSTRUCTION_TEXT_"].Update(visible=True)
     window["_INPUT_ERROR_"].Update(visible=False)
     window["_INPUTS_"].Update(visible=False)
     window["_REGISTER_VALUES_"].Update(visible=True)
     window["_INSTRUCTIONS_"].Update(visible=True)
+    window["_REGISTER_CHOICE_NAME_"].Update(visible=True)
+    window["_REGISTER_CHOICE_"].Update(visible=True)
+
+
+def input_layout():
+    window["_SUBMIT_"].Update(visible=True)
+    window["_INITIAL_TEXT_"].Update(visible=True)
+    window["_INSTRUCTION_TEXT_"].Update(visible=False)
+    window["_INPUTS_"].Update(visible=True)
+    window["_REGISTER_VALUES_"].Update(visible=False)
+    window["_INSTRUCTIONS_"].Update(visible=False)
 
 
 def update_values():
@@ -39,6 +96,12 @@ def update_values():
     window["_DL_VALUE_"].Update(registers["DL"])
     window["_DH_VALUE_"].Update(registers["DH"])
 
+
+register_choice = [[sg.Combo([x for x in registers.keys()], key="_FIRST_LIST_")],
+                   [sg.Combo([x for x in registers.keys()], key="_SECOND_LIST_")]]
+
+register_choice_name = [[sg.Text("First register:")],
+                        [sg.Text("Second register:")]]
 
 register_names = [
     [sg.Text("AL register:", key="_AL_TEXT_")],
@@ -80,27 +143,30 @@ instructions = [
 ]
 
 layout = [
-    [sg.Text("Enter initial state of Intel 8086 registers in hexadecimal values:", key="_INITIAL_TEXT_")],
+    [sg.Text("Enter initial state of Intel 8086 registers in hexadecimal values:", key="_INITIAL_TEXT_"),
+     sg.Text("Choose instruction and registers for simulation for simulation:", key="_INSTRUCTION_TEXT_",
+             visible=False)],
+    [sg.Column(register_choice_name, key="_REGISTER_CHOICE_NAME_", visible=False),
+     sg.Column(register_choice, key="_REGISTER_CHOICE_", visible=False)],
     [sg.Column(register_names, key="_REGISTER_NAMES_"), sg.Column(inputs, key="_INPUTS_", visible=True),
      sg.Column(register_values, key="_REGISTER_VALUES_", visible=False),
      sg.Column(instructions, key="_INSTRUCTIONS_", visible=False)],
-    [sg.Button('Submit', key="_SUBMIT_")],
+    [[sg.Button('Submit', key='_SUBMIT_')], ],
     [sg.Text("Inputs not hexadecimal or not 8 bit!", key="_INPUT_ERROR_", visible=False)],
 ]
 
-window = sg.Window(title="Simulator of Intel 8086", layout=layout, element_justification='c', size=(400, 310))
+window = sg.Window(title="Simulator of Intel 8086", layout=layout, element_justification='c')
 
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
-    if '_Submit_':
+    if "_SUBMIT_":
         for x in registers:
-            registers[x] = values[x.upper()]
+            registers[x] = hex(int(values[x], 16))
         if inputs_hex_and_8_bit():
             update_values()
             instruction_layout()
         else:
             window["_INPUT_ERROR_"].Update(visible=True)
-
 window.close()
