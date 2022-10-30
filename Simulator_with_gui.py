@@ -196,25 +196,26 @@ while True:
             inputs_given = True
         else:
             window["_INPUT_ERROR_"].Update(visible=True)
-    if event == "MOV":
-        MOV(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    if event == "XCHG":
-        XCHG(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    if event == "NOT":
-        NOT(values["_FIRST_LIST_"])
-    if event == "INC":
-        INC(values["_FIRST_LIST_"])
-    if event == "DEC":
-        DEC(values["_FIRST_LIST_"])
-    if event == "AND":
-        AND(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    if event == "OR":
-        OR(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    if event == "XOR":
-        XOR(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    if event == "ADD":
-        ADD(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    if event == "SUB":
-        SUB(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-    update_shown_values()
+    if values["_FIRST_LIST_"] != "" and values["_SECOND_LIST_"] != "":
+        if event == "MOV":
+            MOV(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        if event == "XCHG":
+            XCHG(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        if event == "NOT":
+            NOT(values["_FIRST_LIST_"])
+        if event == "INC":
+            INC(values["_FIRST_LIST_"])
+        if event == "DEC":
+            DEC(values["_FIRST_LIST_"])
+        if event == "AND":
+            AND(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        if event == "OR":
+            OR(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        if event == "XOR":
+            XOR(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        if event == "ADD":
+            ADD(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        if event == "SUB":
+            SUB(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+        update_shown_values()
 window.close()
