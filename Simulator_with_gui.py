@@ -21,7 +21,7 @@ def inputs_hex_and_8_bit():
 
 
 def MOV(a, b):
-    temp = int(registers[b])
+    temp = int(registers[b], 16)
     if temp > 255:
         registers[a] = hex(255)
     else:
@@ -180,7 +180,7 @@ layout = [
 
 inputs_given = False
 
-window = sg.Window(title="Simulator of Intel 8086", layout=layout, element_justification='c')
+window = sg.Window(title="Simulator of Intel 8086", layout=layout, scaling=2.5, element_justification='c')
 
 while True:
     event, values = window.read()
