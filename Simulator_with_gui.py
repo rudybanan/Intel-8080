@@ -193,7 +193,6 @@ while True:
             format_values()
             update_shown_values()
             instruction_layout()
-            window["_SUBMIT_"].Update(disabled=True)
             inputs_given = True
         else:
             window["_INPUT_ERROR_"].Update(visible=True)
