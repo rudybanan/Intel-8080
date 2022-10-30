@@ -10,7 +10,7 @@ registers = {"AL": None,
 
 
 def register_state():
-    print("\nInitial state of the registers of Intel 8086 processor: \n")
+    print("\nState of the registers of Intel 8086 processor: \n")
     for register in registers:
         print(register, "=", registers[register])
 
@@ -53,23 +53,23 @@ def DEC(x):
 
 
 def AND(x, y):
-    registers[x] = registers[x] & registers[y]
+    registers[x] = hex(int(registers[x], 16) & int(registers[y], 16))
 
 
 def OR(x, y):
-    registers[x] = registers[x] | registers[y]
+    registers[x] = hex(int(registers[x], 16) | int(registers[y], 16))
 
 
 def XOR(x, y):
-    registers[x] = registers[x] ^ registers[y]
+    registers[x] = hex(int(registers[x], 16) ^ int(registers[y], 16))
 
 
 def ADD(x, y):
-    registers[x] = registers[x] + registers[y]
+    registers[x] = hex(int(registers[x], 16) + int(registers[y], 16))
 
 
 def SUB(x, y):
-    registers[x] = registers[x] - registers[y]
+    registers[x] = hex(int(registers[x], 16) - int(registers[y], 16))
 
 
 while True:
@@ -84,10 +84,10 @@ while True:
                 if inputs_hex_and_8_bit():
                     wrong_inputs = False
                 else:
-                    print("\nInputs not hexadecimal or not 8 bit!")
+                    print("\nInputs not 8 bit !\n")
         elif action == 2:
             instruction = int(
-                input("\nChoose instruction for simulation:\nMOV - 1\nXCHG - 2\nNOT - 3\nINC - 4\nDEC - 5\n\n"))
+                input("\nChoose instruction for simulation:\nMOV  - 1\nXCHG - 2\nNOT  - 3\nINC  - 4\nDEC  - 5\nAND  - 6\nOR   - 7\nXOR  - 8\nADD  - 9\nSUB  - 10\n\n"))
             if instruction == 1:
                 reg1 = input("Enter first register for MOV instruction: ").upper()
                 reg2 = input("Enter second register for MOV instruction: ").upper()
@@ -95,26 +95,67 @@ while True:
                     MOV(reg2, reg1)
                     print("\n")
                 else:
-                    print("\nWrong registers!\n")
+                    print("\nWrong registers!")
             elif instruction == 2:
                 reg1 = input("Enter first register for XCHG instruction: ")
                 reg2 = input("Enter second register for XCHG instruction: ")
                 if reg1 and reg2 in registers:
                     XCHG(reg1, reg2)
                 else:
-                    print("\nWrong registers!\n")
+                    print("\nWrong registers!")
             elif instruction == 3:
                 reg = input("Enter register for NOT instruction: ")
                 if reg in registers:
                     NOT(reg)
+                else:
+                    print("\nWrong register!")
             elif instruction == 4:
                 reg = input("Enter register for INC instruction: ")
                 if reg in registers:
                     INC(reg)
+                else:
+                    print("\nWrong register!")
             elif instruction == 5:
-                reg = input("Enter register for INC instruction: ")
+                reg = input("Enter register for DEC instruction: ")
                 if reg in registers:
                     DEC(reg)
+                else:
+                    print("\nWrong register!")
+            elif instruction == 6:
+                reg1 = input("Enter first register for AND instruction: ")
+                reg2 = input("Enter second register for AND instruction: ")
+                if reg1 and reg2 in registers:
+                    AND(reg1, reg2)
+                else:
+                    print("\nWrong registers!")
+            elif instruction == 7:
+                reg1 = input("Enter first register for OR instruction: ")
+                reg2 = input("Enter second register for OR instruction: ")
+                if reg1 and reg2 in registers:
+                    OR(reg1, reg2)
+                else:
+                    print("\nWrong registers!")
+            elif instruction == 8:
+                reg1 = input("Enter first register for XOR instruction: ")
+                reg2 = input("Enter second register for XOR instruction: ")
+                if reg1 and reg2 in registers:
+                    XOR(reg1, reg2)
+                else:
+                    print("\nWrong registers!")
+            elif instruction == 9:
+                reg1 = input("Enter first register for ADD instruction: ")
+                reg2 = input("Enter second register for ADD instruction: ")
+                if reg1 and reg2 in registers:
+                    ADD(reg1, reg2)
+                else:
+                    print("\nWrong registers!")
+            elif instruction == 10:
+                reg1 = input("Enter first register for SUB instruction: ")
+                reg2 = input("Enter second register for SUB instruction: ")
+                if reg1 and reg2 in registers:
+                    SUB(reg1, reg2)
+                else:
+                    print("\nWrong registers!")
             else:
                 print("Wrong instruction!")
         elif action == 3:
@@ -122,10 +163,5 @@ while True:
         else:
             print("Wrong action!")
     except ValueError:
-        print("Wrong action!")
+        print("\nWrong action or inputs not hexadecimal!")
 
-# AND - dwa rejestry 0,1 daje 0 w pierwszym itd dla kazdego bitu
-# OR -
-# XOR -
-# ADD - dodawanie
-# SUB - odejmowanie

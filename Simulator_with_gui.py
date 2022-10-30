@@ -21,7 +21,11 @@ def inputs_hex_and_8_bit():
 
 
 def MOV(a, b):
-    registers[a] = registers[b]
+    temp = int(registers[b])
+    if temp > 255:
+        registers[a] = hex(255)
+    else:
+        registers[a] = registers[b]
 
 
 def XCHG(x, y):
@@ -36,33 +40,47 @@ def NOT(x):
 def INC(x):
     temp = int(registers[x], 16)
     temp += 1
-    registers[x] = hex(temp)
+    if temp > 255:
+        registers[x] = hex(255)
+    else:
+        registers[x] = hex(temp)
 
 
 def DEC(x):
     temp = int(registers[x], 16)
     temp -= 1
-    registers[x] = hex(temp)
+    if temp < 0:
+        registers[x] = hex(0)
+    else:
+        registers[x] = hex(temp)
 
 
 def AND(x, y):
-    registers[x] = registers[x] & registers[y]
+    registers[x] = hex(int(registers[x], 16) & int(registers[y], 16))
 
 
 def OR(x, y):
-    registers[x] = registers[x] | registers[y]
+    registers[x] = hex(int(registers[x], 16) | int(registers[y], 16))
 
 
 def XOR(x, y):
-    registers[x] = registers[x] ^ registers[y]
+    registers[x] = hex(int(registers[x], 16) ^ int(registers[y], 16))
 
 
 def ADD(x, y):
-    registers[x] = registers[x] + registers[y]
+    temp = int(registers[x], 16) + int(registers[y], 16)
+    if temp > 255:
+        registers[x] = hex(255)
+    else:
+        registers[x] = hex(temp)
 
 
 def SUB(x, y):
-    registers[x] = registers[x] - registers[y]
+    temp = int(registers[x], 16) - int(registers[y], 16)
+    if temp < 0:
+        registers[x] = hex(0)
+    else:
+        registers[x] = hex(temp)
 
 
 def instruction_layout():
@@ -86,7 +104,12 @@ def input_layout():
     window["_INSTRUCTIONS_"].Update(visible=False)
 
 
-def update_values():
+def format_values():
+    for x in registers:
+        registers[x] = hex(int(registers[x], 16))
+
+
+def update_shown_values():
     window["_AL_VALUE_"].Update(registers["AL"])
     window["_AH_VALUE_"].Update(registers["AH"])
     window["_BL_VALUE_"].Update(registers["BL"])
@@ -135,11 +158,11 @@ inputs = [
 ]
 
 instructions = [
-    [sg.Button('MOV', key='MOV', size=(5, 2)), sg.Button('XCHG', key='XCHG', size=(5, 2))],
-    [sg.Button('INC', key='INC', size=(5, 2)), sg.Button('DEC', key='DEC', size=(5, 2))],
-    [sg.Button('NOT', key='NOT', size=(5, 2)), sg.Button('AND', key='AND', size=(5, 2))],
-    [sg.Button('OR', key='OR', size=(5, 2)), sg.Button('XOR', key='XOR', size=(5, 2))],
-    [sg.Button('ADD', key='ADD', size=(5, 2)), sg.Button('SUB', key='SUB', size=(5, 2))],
+    [sg.Button('MOV', size=(5, 2)), sg.Button('XCHG', size=(5, 2))],
+    [sg.Button('INC', size=(5, 2)), sg.Button('DEC', size=(5, 2))],
+    [sg.Button('NOT', size=(5, 2)), sg.Button('AND', size=(5, 2))],
+    [sg.Button('OR', size=(5, 2)), sg.Button('XOR', size=(5, 2))],
+    [sg.Button('ADD', size=(5, 2)), sg.Button('SUB', size=(5, 2))],
 ]
 
 layout = [
@@ -151,9 +174,11 @@ layout = [
     [sg.Column(register_names, key="_REGISTER_NAMES_"), sg.Column(inputs, key="_INPUTS_", visible=True),
      sg.Column(register_values, key="_REGISTER_VALUES_", visible=False),
      sg.Column(instructions, key="_INSTRUCTIONS_", visible=False)],
-    [[sg.Button('Submit', key='_SUBMIT_')], ],
+    [[sg.Button('Submit', key='_SUBMIT_')]],
     [sg.Text("Inputs not hexadecimal or not 8 bit!", key="_INPUT_ERROR_", visible=False)],
 ]
+
+inputs_given = False
 
 window = sg.Window(title="Simulator of Intel 8086", layout=layout, element_justification='c')
 
@@ -161,12 +186,36 @@ while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
-    if "_SUBMIT_":
+    if "_SUBMIT_" and not inputs_given:
         for x in registers:
-            registers[x] = hex(int(values[x], 16))
+            registers[x] = values[x]
         if inputs_hex_and_8_bit():
-            update_values()
+            format_values()
+            update_shown_values()
             instruction_layout()
+            window["_SUBMIT_"].Update(disabled=True)
+            inputs_given = True
         else:
             window["_INPUT_ERROR_"].Update(visible=True)
+    if event == "MOV":
+        MOV(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    if event == "XCHG":
+        XCHG(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    if event == "NOT":
+        NOT(values["_FIRST_LIST_"])
+    if event == "INC":
+        INC(values["_FIRST_LIST_"])
+    if event == "DEC":
+        DEC(values["_FIRST_LIST_"])
+    if event == "AND":
+        AND(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    if event == "OR":
+        OR(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    if event == "XOR":
+        XOR(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    if event == "ADD":
+        ADD(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    if event == "SUB":
+        SUB(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
+    update_shown_values()
 window.close()
