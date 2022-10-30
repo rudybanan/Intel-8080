@@ -201,12 +201,6 @@ while True:
             MOV(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
         if event == "XCHG":
             XCHG(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-        if event == "NOT":
-            NOT(values["_FIRST_LIST_"])
-        if event == "INC":
-            INC(values["_FIRST_LIST_"])
-        if event == "DEC":
-            DEC(values["_FIRST_LIST_"])
         if event == "AND":
             AND(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
         if event == "OR":
@@ -217,5 +211,12 @@ while True:
             ADD(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
         if event == "SUB":
             SUB(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
-        update_shown_values()
+    if values["_FIRST_LIST_"] != "":
+        if event == "NOT":
+            NOT(values["_FIRST_LIST_"])
+        if event == "INC":
+            INC(values["_FIRST_LIST_"])
+        if event == "DEC":
+            DEC(values["_FIRST_LIST_"])
+    update_shown_values()
 window.close()
