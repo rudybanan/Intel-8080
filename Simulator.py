@@ -1,3 +1,8 @@
+from random import *
+memory = []
+for i in range(65536):
+    memory.append(randint(0, 255))
+
 registers = {"AL": None,
              "AH": None,
              "BL": None,
@@ -76,7 +81,7 @@ while True:
     register_state()
     try:
         action = int(input(
-            "\nEnter action you want to execute:\n\nChange values of the registers - 1\nEnter instruction for program to execute - 2\nQuit - 3\n\n"))
+            "\nEnter action you want to execute:\n\nChange values of the registers - 1\nEnter instruction between registers for program to execute - 2\nEnter instruction between registers and memory for program to execute - 3\nQuit - 4\n\n"))
         if action == 1:
             wrong_inputs = True
             while wrong_inputs:
@@ -87,7 +92,8 @@ while True:
                     print("\nInputs not 8 bit !\n")
         elif action == 2:
             instruction = int(
-                input("\nChoose instruction for simulation:\nMOV  - 1\nXCHG - 2\nNOT  - 3\nINC  - 4\nDEC  - 5\nAND  - 6\nOR   - 7\nXOR  - 8\nADD  - 9\nSUB  - 10\n\n"))
+                input(
+                    "\nChoose instruction for simulation:\nMOV  - 1\nXCHG - 2\nNOT  - 3\nINC  - 4\nDEC  - 5\nAND  - 6\nOR   - 7\nXOR  - 8\nADD  - 9\nSUB  - 10\n\n"))
             if instruction == 1:
                 reg1 = input("Enter first register for MOV instruction: ").upper()
                 reg2 = input("Enter second register for MOV instruction: ").upper()
@@ -159,9 +165,27 @@ while True:
             else:
                 print("Wrong instruction!")
         elif action == 3:
+            try:
+                object1 = input("Enter register or memory cell for instruction: ")
+                if object1.upper() in registers:
+                    object2 = input("Enter memory cell for instruction: ")
+                    if 255 < object2 < 65536:
+                        registers[object1] = memory[int(object2, 16)]
+                    else:
+                        print("Wrong memory cell!")
+                elif int(object1, 16) < 65536:
+                    object2 = input("Enter second register for instruction: ")
+                    if object2.upper() in registers:
+                        memory[int(object1, 16)] = registers[object2]
+                    else:
+                        print("Wrong register!")
+                else:
+                    print("Wrong register or memory cell!")
+            except ValueError:
+                print("ERROR")
+        elif action == 4:
             break
         else:
             print("Wrong action!")
     except ValueError:
-        print("\nWrong action or inputs not hexadecimal!")
-
+        print("\nERROR!")
