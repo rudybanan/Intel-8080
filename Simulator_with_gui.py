@@ -166,8 +166,8 @@ instructions = [
 ]
 
 layout = [
-    [sg.Text("Enter initial state of Intel 8086 registers in hexadecimal values:", key="_INITIAL_TEXT_"),
-     sg.Text("Choose instruction and registers for simulation for simulation:", key="_INSTRUCTION_TEXT_",
+    [sg.Text("\nEnter initial state of Intel 8086 registers in hexadecimal values:", key="_INITIAL_TEXT_"),
+     sg.Text("\nChoose instruction and registers for simulation for simulation:", key="_INSTRUCTION_TEXT_",
              visible=False)],
     [sg.Column(register_choice_name, key="_REGISTER_CHOICE_NAME_", visible=False),
      sg.Column(register_choice, key="_REGISTER_CHOICE_", visible=False)],
@@ -180,7 +180,7 @@ layout = [
 
 inputs_given = False
 
-window = sg.Window(title="Simulator of Intel 8086", layout=layout, scaling=2.5, element_justification='c')
+window = sg.Window(title="Simulator of Intel 8086", layout=layout, scaling=2, element_justification='c')
 
 while True:
     event, values = window.read()
