@@ -1,4 +1,9 @@
 import PySimpleGUI as sg
+from random import *
+
+memory = []
+for i in range(65536):
+    memory.append(randint(0, 255))
 
 registers = {"AL": None,
              "AH": None,
