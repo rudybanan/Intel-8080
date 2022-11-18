@@ -88,15 +88,6 @@ def SUB(x, y):
         registers[x] = hex(temp)
 
 
-def clear_addresses():
-    window["_REGISTER_CHOICE_"].Update(visible=False)
-    window["_REGISTER_CHOICE_NAME_"].Update(visible=False)
-    window["_REGISTER_MEMORY_CHOICE_"].Update(visible=False)
-    window["_REGISTER_MEMORY_CHOICE_NAME_"].Update(visible=False)
-    window["_MEMORY_REGISTER_CHOICE_"].Update(visible=False)
-    window["_MEMORY_REGISTER_CHOICE_NAME_"].Update(visible=False)
-
-
 def instruction_layout():
     window["_SUBMIT_"].Update(visible=False)
     window["_INITIAL_TEXT_"].Update(visible=False)
@@ -105,7 +96,9 @@ def instruction_layout():
     window["_INPUTS_"].Update(visible=False)
     window["_REGISTER_VALUES_"].Update(visible=True)
     window["_INSTRUCTIONS_"].Update(visible=True)
-    window["ADDRESSES"].Update(visible=True)
+    window["_REGISTER_CHOICE_NAME_"].Update(visible=True)
+    window["_REGISTER_CHOICE_"].Update(visible=True)
+    window["_ALLOW_MEMORY_"].Update(visible=True)
 
 
 def input_layout():
@@ -133,23 +126,11 @@ def update_shown_values():
     window["_DH_VALUE_"].Update(registers["DH"])
 
 
-register_choice = [[sg.Combo([x for x in registers.keys()], key="_FIRST_LIST_", size=5)],
-                   [sg.Combo([x for x in registers.keys()], key="_SECOND_LIST_", size=5)]]
+register_choice = [[sg.Combo([x for x in registers.keys()], key="_FIRST_LIST_")],
+                   [sg.Combo([x for x in registers.keys()], key="_SECOND_LIST_")]]
 
 register_choice_name = [[sg.Text("First register:")],
                         [sg.Text("Second register:")]]
-
-register_memory_choice = [[sg.Combo([x for x in registers.keys()], key="_REGISTER1_", size=5)],
-                          [sg.InputText(key="_MEMORY1_", size=5)]]
-
-register_memory_choice_name = [[sg.Text("Register:")],
-                               [sg.Text("Memory:")]]
-
-memory_register_choice = [[sg.InputText(key="_MEMORY2_", size=5)],
-                          [sg.Combo([x for x in registers.keys()], key="_REGISTER2_", size=5)]]
-
-memory_register_choice_name = [[sg.Text("Memory:")],
-                               [sg.Text("Register:")]]
 
 register_names = [
     [sg.Text("AL register:", key="_AL_TEXT_")],
@@ -192,26 +173,24 @@ instructions = [
     [sg.Button('ADD', size=(5, 2)), sg.Button('SUB', size=(5, 2))],
 ]
 
-instructions_addresses = [
-    [sg.Radio("Instruction addressed from register to register", "ADDRESS_CHOICE", enable_events=True, default=False,
-              key="REGISTER_REGISTER")],
-    [sg.Radio("Instruction addressed from register to memory", "ADDRESS_CHOICE", enable_events=True, default=False,
-              key="REGISTER_MEMORY")],
-    [sg.Radio("Instruction addressed from memory to register", "ADDRESS_CHOICE", enable_events=True, default=False,
-              key="MEMORY_REGISTER")]
+allow_memory = [
+    [sg.Checkbox("Allow memory", enable_events=True, default=False, key="_ALLOW_MEMORY_1_")],
+    [sg.Checkbox("Allow memory", enable_events=True, default=False, key="_ALLOW_MEMORY_2_")]
+]
+
+memory_input = [
+    [sg.InputText(key="_MEMORY1_", size=5)],
+    [sg.InputText(key="_MEMORY2_", size=5)]
 ]
 
 layout = [
     [sg.Text("\nEnter initial state of Intel 8086 registers in hexadecimal values:", key="_INITIAL_TEXT_"),
      sg.Text("\nChoose instruction and registers for simulation for simulation:", key="_INSTRUCTION_TEXT_",
              visible=False)],
-    [sg.Column(instructions_addresses, key="ADDRESSES", visible=False)],
     [sg.Column(register_choice_name, key="_REGISTER_CHOICE_NAME_", visible=False),
      sg.Column(register_choice, key="_REGISTER_CHOICE_", visible=False),
-     sg.Column(register_memory_choice_name, key="_REGISTER_MEMORY_CHOICE_NAME_", visible=False),
-     sg.Column(register_memory_choice, key="_REGISTER_MEMORY_CHOICE_", visible=False),
-     sg.Column(memory_register_choice_name, key="_MEMORY_REGISTER_CHOICE_NAME_", visible=False),
-     sg.Column(memory_register_choice, key="_MEMORY_REGISTER_CHOICE_", visible=False)],
+     sg.Column(memory_input, key="_MEMORY_INPUT_", visible=False),
+     sg.Column(allow_memory, key="_ALLOW_MEMORY_", visible=False)],
     [sg.Column(register_names, key="_REGISTER_NAMES_"), sg.Column(inputs, key="_INPUTS_", visible=True),
      sg.Column(register_values, key="_REGISTER_VALUES_", visible=False),
      sg.Column(instructions, key="_INSTRUCTIONS_", visible=False)],
@@ -238,18 +217,18 @@ while True:
             inputs_given = True
         else:
             window["_INPUT_ERROR_"].Update(visible=True)
-    if values["REGISTER_REGISTER"]:
-        clear_addresses()
-        window["_REGISTER_CHOICE_NAME_"].Update(visible=True)
-        window["_REGISTER_CHOICE_"].Update(visible=True)
-    if values["REGISTER_MEMORY"]:
-        clear_addresses()
-        window["_REGISTER_MEMORY_CHOICE_NAME_"].Update(visible=True)
-        window["_REGISTER_MEMORY_CHOICE_"].Update(visible=True)
-    if values["MEMORY_REGISTER"]:
-        clear_addresses()
-        window["_MEMORY_REGISTER_CHOICE_NAME_"].Update(visible=True)
-        window["_MEMORY_REGISTER_CHOICE_"].Update(visible=True)
+    if values["_ALLOW_MEMORY_1_"]:
+        window["_FIRST_LIST_"].Update(visible=False)
+        window["_MEMORY1_"].Update(visible=True)
+    if values["_ALLOW_MEMORY_2_"]:
+        window["_SECOND_LIST_"].Update(visible=False)
+        window["_MEMORY2_"].Update(visible=True)
+    if not values["_ALLOW_MEMORY_1_"]:
+        window["_FIRST_LIST_"].Update(visible=True)
+        window["_MEMORY1_"].Update(visible=False)
+    if not values["_ALLOW_MEMORY_2_"]:
+        window["_SECOND_LIST_"].Update(visible=True)
+        window["_MEMORY2_"].Update(visible=False)
     if values["_FIRST_LIST_"] != "" and values["_SECOND_LIST_"] != "":
         if event == "MOV":
             MOV(values["_FIRST_LIST_"], values["_SECOND_LIST_"])
