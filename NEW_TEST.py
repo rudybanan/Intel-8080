@@ -25,6 +25,13 @@ def inputs_hex_and_8_bit():
         return False
 
 
+def correct_memory(x):
+    try:
+        return int(x, 16) < 0x10000
+    except ValueError:
+        return False
+
+
 #################################################
 def MOV(a, b):
     temp = int(registers[b], 16)
@@ -302,7 +309,7 @@ allow_memory = [
 
 layout = [
     [sg.Text("\nEnter initial state of Intel 8086 registers in hexadecimal values:", key="_INITIAL_TEXT_"),
-     sg.Text("\nChoose instruction and registers for simulation for simulation:\n", key="_INSTRUCTION_TEXT_",
+     sg.Text("\nChoose instruction and registers for simulation:\n", key="_INSTRUCTION_TEXT_",
              visible=False)],
     [sg.Column(address_choice_name, key="_ADDRESS_CHOICE_NAME_", visible=False),
      sg.Column(register_memory_input, key="_REGISTER_CHOICE_", visible=False),
@@ -314,7 +321,8 @@ layout = [
     [sg.Text("For instructions working on single address, first is used.", key="_ADDRESS_INFO_", visible=False)],
     [sg.Text("Inputs not hexadecimal or not 8 bit!", text_color="red", key="_INPUT_ERROR_", visible=False),
      sg.Text("\nInstructions can not be addressed between memory!", text_color="red", key="_ADDRESS_ERROR_",
-             visible=False)],
+             visible=False),
+     sg.Text("\nWrong memory address!", text_color="red", key="_MEMORY_ERROR_", visible=False)],
 ]
 
 inputs_given = False
@@ -376,41 +384,52 @@ while True:
         if event == "DEC":
             DEC(values["_FIRST_LIST_"])
     if values["_MEMORY1_"] != "" and values["_ALLOW_MEMORY_1_"]:
-        if event == "NOT":
-            NOT_MEM(values["_MEMORY1_"])
-        if event == "INC":
-            INC_MEM(values["_MEMORY1_"])
-        if event == "DEC":
-            DEC_MEM(values["_MEMORY1_"])
-    if values["_ALLOW_MEMORY_1_"] and not values["_ALLOW_MEMORY_2_"] and values["_MEMORY1_"] and values["_SECOND_LIST_"]:
-        if event == "MOV":
-            MOV_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-        if event == "XCHG":
-            XCHG_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-        if event == "AND":
-            AND_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-        if event == "OR":
-            OR_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-        if event == "XOR":
-            XOR_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-        if event == "ADD":
-            ADD_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-        if event == "SUB":
-            SUB_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
-    if values["_ALLOW_MEMORY_2_"] and not values["_ALLOW_MEMORY_1_"] and values["_MEMORY2_"] and values["_FIRST_LIST_"]:
-        if event == "MOV":
-            MOV_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
-        if event == "XCHG":
-            XCHG_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
-        if event == "AND":
-            AND_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
-        if event == "OR":
-            OR_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
-        if event == "XOR":
-            XOR_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
-        if event == "ADD":
-            ADD_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
-        if event == "SUB":
-            SUB_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+        if correct_memory(values["_MEMORY1_"]):
+            window["_MEMORY_ERROR_"].Update(visible=False)
+            if event == "NOT":
+                NOT_MEM(values["_MEMORY1_"])
+            if event == "INC":
+                INC_MEM(values["_MEMORY1_"])
+            if event == "DEC":
+                DEC_MEM(values["_MEMORY1_"])
+        if not correct_memory(values["_MEMORY1_"]):
+            window["_MEMORY_ERROR_"].Update(visible=True)
+    if values["_ALLOW_MEMORY_1_"] and not values["_ALLOW_MEMORY_2_"] \
+            and values["_MEMORY1_"] and values["_SECOND_LIST_"]:
+        if correct_memory(values["_MEMORY1_"]):
+            if event == "MOV":
+                MOV_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+            if event == "XCHG":
+                XCHG_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+            if event == "AND":
+                AND_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+            if event == "OR":
+                OR_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+            if event == "XOR":
+                XOR_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+            if event == "ADD":
+                ADD_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+            if event == "SUB":
+                SUB_MEM_REG(values["_MEMORY1_"], values["_SECOND_LIST_"])
+    if values["_ALLOW_MEMORY_2_"] and not values["_ALLOW_MEMORY_1_"] \
+            and values["_MEMORY2_"] and values["_FIRST_LIST_"]:
+        if correct_memory(values["_MEMORY2_"]):
+            window["_MEMORY_ERROR_"].Update(visible=False)
+            if event == "MOV":
+                MOV_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+            if event == "XCHG":
+                XCHG_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+            if event == "AND":
+                AND_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+            if event == "OR":
+                OR_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+            if event == "XOR":
+                XOR_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+            if event == "ADD":
+                ADD_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+            if event == "SUB":
+                SUB_REG_MEM(values["_FIRST_LIST_"], values["_MEMORY2_"])
+        if not correct_memory(values["_MEMORY2_"]):
+            window["_MEMORY_ERROR_"].Update(visible=True)
     update_shown_values()
 window.close()
